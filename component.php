@@ -36,13 +36,19 @@ if(CModule::IncludeModule('iblock')){
        
        $elementResult = CIBlockElement::GetList($arOrder, $arFilter, false, false, $arSelect);
        $arResult["CATALOG_DATA"] = array();
+       $prices = array();
        while ($elementRow = $elementResult->GetNext()){
            //Формирование URL детального просмотра элементов
            $elementRow["DETAIL_PAGE_URL"] = str_replace(array("#SECTION_ID#", "#ID#"), array($elementRow["IBLOCK_SECTION_ID"], $elementRow["ID"]), $arParams["DETAIL_PAGE_URL"]);
            
+           //Массив всех цен полученных товаров
+           $prices[] = $elementRow["PROPERTY_PRICE_VALUE"];
+           
            $arResult["CATALOG_DATA"][] = $elementRow;
        }
-      
+        $arResult["CATALOG_DATA"]["MAX_PRICE"] = max($prices);
+        $arResult["CATALOG_DATA"]["MIN_PRICE"] = min($prices);
+        
        // Выборка данных из инфоблока классификатора с добавлением в массив arResult данных из инфоблока продукции
        $count = 0;
        $arFilter = array("IBLOCK_ID" => $arParams["CLASSIFIER_IBLOCK_ID"], "CHECK_PERMISSIONS" => "Y");
@@ -78,7 +84,7 @@ if(CModule::IncludeModule('iblock')){
     if ($APPLICATION->GetShowIncludeAreas()){
 
         $this->AddIncludeAreaIcons(
-            Array( //массив кнопок toolbar'a
+            Array(
                 Array(
                     "ID" => "IbInAdminPanel",
                     "TITLE" => "ИБ в админке",
@@ -88,8 +94,7 @@ if(CModule::IncludeModule('iblock')){
             )
         );
     }
-
-    // echo "<pre>"; print_r(111); echo "</pre>";
+    // echo "<pre>"; print_r($arResult["CATALOG_DATA"]); echo "</pre>";
 
        $this->IncludeComponentTemplate();
    }
