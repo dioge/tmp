@@ -26,3 +26,8 @@
     </div>
 <?endforeach;?>
 </ul>
+
+<?$this->SetViewTarget("sidebar");?>
+    Максимальная цена: <?=$arResult["CATALOG_DATA"]["MAX_PRICE"];?><br>
+    Минимальная цена: <?=$arResult["CATALOG_DATA"]["MIN_PRICE"];?>
+<?$this->EndViewTarget();?>
